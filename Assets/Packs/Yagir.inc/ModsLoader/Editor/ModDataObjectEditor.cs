@@ -107,12 +107,16 @@ public class ModDataObjectEditor : Editor
     {
         if (!string.IsNullOrEmpty(directory) && !isHaveAssembly)
         {
-            if (mod.initializers == null)
+            serializedObject.Update();
+            if (mod.initializers == null && mod.initializers.scripts != null)
             {
                 mod.initializers = new ScriptData();
+                mod.initializers.scripts = new List<TextAsset>();
             }
 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("initializers").FindPropertyRelative("scripts"), true);
+            var scripts = serializedObject.FindProperty("initializers").FindPropertyRelative("scripts");
+            EditorGUILayout.PropertyField(scripts, true);
+            serializedObject.ApplyModifiedProperties();
             List<string> classNames = new List<string>();
 
             if (mod.initializers != null)
@@ -178,7 +182,9 @@ public class ModDataObjectEditor : Editor
             GUILayout.Space(10);
             SetVersion();
             GUILayout.Space(10);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("prefabs"), true);
+            var scripts = serializedObject.FindProperty("prefabs");
+            EditorGUILayout.PropertyField(scripts, true);
+            serializedObject.ApplyModifiedProperties();
             SetScripts();
             GUILayout.Space(10);
             DrawButtons();
